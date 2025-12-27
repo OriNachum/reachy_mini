@@ -96,7 +96,7 @@ class GStreamerAudio(AudioBase):
         
         elements = [audiosrc, queue, audioconvert, audioresample, self._appsink_audio]
         if not all(elements):
-            raise RuntimeError("Failed to create specific GStreamer elements")
+            raise RuntimeError("Failed to create required GStreamer elements")
 
         for elem in elements:
             pipeline.add(elem)
