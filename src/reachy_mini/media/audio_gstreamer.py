@@ -3,6 +3,7 @@
 This module provides an implementation of the AudioBase class using GStreamer.
 By default the module directly returns audio stream by ReStreamer
 """
+import os
 import sys
 from threading import Thread
 from typing import Optional
