@@ -108,7 +108,7 @@ class GStreamerAudio(AudioBase):
         if not audioconvert.link(audioresample):
             raise RuntimeError("Failed to link audioconvert -> audioresample")
         if not audioresample.link(self._appsink_audio):
-             raise RuntimeError("Failed to link audioresample -> appsink")
+            raise RuntimeError("Failed to link audioresample -> appsink")
 
     def __del__(self) -> None:
         """Destructor to ensure gstreamer resources are released."""
