@@ -197,6 +197,8 @@ class GStreamerAudio(AudioBase):
 
     def get_audio_sample(self) -> Optional[npt.NDArray[np.float32]]:
         """Read a sample from the audio card."""
+        if self._appsink_audio is None:
+            return None
         data = self._get_sample(self._appsink_audio)
         if data is None:
             return None
