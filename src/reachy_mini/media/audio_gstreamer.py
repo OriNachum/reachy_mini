@@ -172,28 +172,24 @@ class GStreamerAudio(AudioBase):
         self._pipeline_record.set_state(Gst.State.PLAYING)
 
     def _get_sample(self, appsink: GstApp.AppSink) -> Optional[npt.NDArray[np.float32]]:
+        data = None
         sample = appsink.try_pull_sample(20_000_000)
-        if sample is None:
-            return None
-        
+
         if isinstance(sample, Gst.Sample):
             buf = sample.get_buffer()
-            if buf is None:
+            if buf is not None:
+                success, mapinfo = buf.map(Gst.MapFlags.READ)
+                if success:
+                    try:
+                        data = np.frombuffer(mapinfo.data, dtype=np.float32).copy()
+                    finally:
+                        buf.unmap(mapinfo)
+                else:
+                    self.logger.error("Failed to map buffer")
+            else:
                 self.logger.warning("Buffer is None")
-                return None
 
-            success, mapinfo = buf.map(Gst.MapFlags.READ)
-            if not success:
-                self.logger.error("Failed to map buffer")
-                return None
-            
-            try:
-                data = np.frombuffer(mapinfo.data, dtype=np.float32).copy()
-            finally:
-                buf.unmap(mapinfo)
-            
-            return data
-        return None
+        return data
 
     def get_audio_sample(self) -> Optional[npt.NDArray[np.float32]]:
         """Read a sample from the audio card."""
