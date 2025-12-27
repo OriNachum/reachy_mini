@@ -3,6 +3,7 @@
 This module provides an implementation of the AudioBase class using GStreamer.
 By default the module directly returns audio stream by ReStreamer
 """
+
 import os
 import sys
 from threading import Thread
@@ -15,7 +16,6 @@ from reachy_mini.media.audio_utils import (
     get_respeaker_card_number,
     has_reachymini_asoundrc,
 )
-
 from reachy_mini.utils.constants import ASSETS_ROOT_PATH
 
 try:
