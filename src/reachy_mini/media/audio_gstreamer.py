@@ -10,7 +10,12 @@ from typing import Optional
 import numpy as np
 import numpy.typing as npt
 
-from reachy_mini.media.audio_utils import get_respeaker_card_number
+from reachy_mini.media.audio_utils import (
+    get_respeaker_card_number,
+    has_reachymini_asoundrc,
+)
+
+from reachy_mini.utils.constants import ASSETS_ROOT_PATH
 
 try:
     import gi
