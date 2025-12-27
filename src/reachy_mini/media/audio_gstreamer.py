@@ -242,11 +242,37 @@ class GStreamerAudio(AudioBase):
     def play_sound(self, sound_file: str) -> None:
         """Play a sound file.
 
+        Todo: for now this function is mean to be used on the wireless version.
+
         Args:
             sound_file (str): Path to the sound file to play.
 
         """
-        self.logger.warning("play_sound is not implemented for GStreamerAudio.")
+        if not os.path.exists(sound_file):
+            file_path = f"{ASSETS_ROOT_PATH}/{sound_file}"
+            if not os.path.exists(file_path):
+                raise FileNotFoundError(
+                    f"Sound file {sound_file} not found in assets directory or given path."
+                )
+        else:
+            file_path = sound_file
+
+        audiosink: Optional[Gst.Element] = None
+
+        if has_reachymini_asoundrc():
+            # reachy mini wireless has a preconfigured asoundrc
+            audiosink = Gst.ElementFactory.make("alsasink")
+            audiosink.set_property("device", "reachymini_audio_sink")
+
+        playbin = Gst.ElementFactory.make("playbin", "player")
+        if not playbin:
+            self.logger.error("Failed to create playbin element")
+            return
+        playbin.set_property("uri", f"file://{file_path}")
+        if audiosink is not None:
+            playbin.set_property("audio-sink", audiosink)
+
+        playbin.set_state(Gst.State.PLAYING)
 
     def clear_player(self) -> None:
         """Flush the player's appsrc to drop any queued audio immediately."""
